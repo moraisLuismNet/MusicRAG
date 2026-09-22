@@ -1,0 +1,9 @@
+streamlit>=1.37
+ollama>=0.4
+numpy>=1.26
+
+# Voice input (optional, 100% local).
+# Preferred engine: faster-whisper (Spanish + English titles).
+# Download the model with: python -m musicrag voice-setup  (~460 MB)
+faster-whisper>=1.0
+sounddevice>=0.4.6
