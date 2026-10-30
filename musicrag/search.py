@@ -1,4 +1,7 @@
 import re
+import warnings
+
+import numpy as np
 
 from .config import EMBED_MODEL, TOP_K, VALID_MODES
 from .db import get_conn
@@ -14,11 +17,22 @@ ROW_SQL = """
 
 def semantic_search(query_embedding, top_k: int = TOP_K) -> list[tuple[float, dict]]:
     """Semantic search: cosine similarity over all embeddings (float32 BLOBs)."""
+    q = np.asarray(query_embedding, dtype="float32")
     with get_conn() as conn:
         rows = conn.execute(ROW_SQL).fetchall()
     scored = []
+    mismatch_warned = False
     for r in rows:
         vec = from_blob(r["embedding"])
+        if len(vec) != len(q):
+            if not mismatch_warned:
+                mismatch_warned = True
+                warnings.warn(
+                    f"Stored embeddings have {len(vec)} dims but the query has "
+                    f"{len(q)}; re-ingest to fix. Skipping semantic ranking.",
+                    stacklevel=2,
+                )
+            continue
         s = cosine_similarity(query_embedding, vec)
         scored.append((s, dict(r)))
     scored.sort(key=lambda x: x[0], reverse=True)

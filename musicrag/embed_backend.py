@@ -135,7 +135,8 @@ def embed_texts(model: str, texts: list[str], progress=None,
         return embed_local(texts, progress=progress, train=train)
 
     available = list_all_models()
-    if model in available:
+    available_base = [m.split(":")[0] for m in available]
+    if model in available or model.split(":")[0] in available_base:
         try:
             from .ollama_client import embed_texts as ollama_embed
             return ollama_embed(model, texts, progress=progress)
@@ -177,8 +178,8 @@ def effective_backend(model: str) -> str:
         return "local"
     if EMBED_BACKEND == "ollama":
         return "ollama"
-    from .ollama_client import list_all_models
-    return "ollama" if model in list_all_models() else "local"
+    available = [m.split(":")[0] for m in list_all_models()]
+    return "ollama" if model in available else "local"
 
 
 def embed_one(model: str, text: str) -> list[float]:

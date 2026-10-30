@@ -73,7 +73,7 @@ LAN_IP="$(
 opener_pid=$!
 trap 'kill "$opener_pid" 2>/dev/null || true' EXIT
 
-if streamlit run app.py --server.address "${HOST}" --server.port "${PORT}"; then
+if python -m streamlit run app.py --server.address "${HOST}" --server.port "${PORT}"; then
   streamlit_rc=0
 else
   streamlit_rc=$?

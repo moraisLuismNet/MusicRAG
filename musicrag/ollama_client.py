@@ -27,7 +27,14 @@ def is_embedding_model(name: str) -> bool:
 
 def list_all_models() -> list[str]:
     try:
-        return [m["name"] for m in get_client().list()["models"]]
+        res = get_client().list()
+        models = getattr(res, "models", None) or res.get("models", [])
+        names = []
+        for m in models:
+            name = getattr(m, "model", None) or getattr(m, "name", None) or (m.get("model") or m.get("name") if isinstance(m, dict) else "")
+            if name:
+                names.append(name)
+        return names
     except Exception:
         return []
 

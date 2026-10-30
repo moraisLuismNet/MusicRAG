@@ -225,6 +225,7 @@ with tabs[0]:
         if not find_voice():
             st.caption("No TTS voice available on this system.")
 
+    pending_question = None
     if voice_col.button("🎤 Ask by voice", use_container_width=True):
         from musicrag.speech import available, record_and_recognize
 
@@ -236,7 +237,7 @@ with tabs[0]:
                 question = record_and_recognize()
             if question:
                 st.caption(f"I heard you: «{question}»")
-                generate_answer(question)
+                pending_question = question
             else:
                 from musicrag.speech import last_stats
                 rev = last_stats()
@@ -253,6 +254,9 @@ with tabs[0]:
     for m in st.session_state.messages:
         with st.chat_message(m["role"]):
             st.markdown(m["content"])
+
+    if pending_question:
+        generate_answer(pending_question)
 
     prompt = st.chat_input("Ask about music, artists, albums, genres...")
     if prompt:

@@ -493,9 +493,7 @@ def _store_doc(conn, doc: dict, chunk_vecs: list[tuple[str, list]]) -> int:
 
 
 def reindex(progress=None) -> None:
-    """Re-trains the IDF and re-embeds all chunks (local backends)."""
-    from .embed_backend import embed_local
-
+    """Re-trains the IDF and re-embeds all chunks with the effective backend."""
     with get_conn() as conn:
         recompute_idf_from_chunks(conn)
         rows = conn.execute("SELECT id, content FROM chunks").fetchall()
@@ -503,7 +501,7 @@ def reindex(progress=None) -> None:
         if not n:
             return
         texts = [f"{doc_prefix()}{r['content']}" for r in rows]
-        vecs = embed_local(texts, progress=progress, train=True)
+        vecs = embed_texts(EMBED_MODEL, texts, progress=progress)
         for r, vec in zip(rows, vecs):
             conn.execute(
                 "UPDATE chunks SET embedding=? WHERE id=?",

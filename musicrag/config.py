@@ -26,7 +26,7 @@ INGEST_DIR = Path(
 )
 
 # Audio library: indexed into music_files to locate and play songs.
-AUDIO_DIR = Path(os.getenv("MUSICRAG_AUDIO_DIR", "G:/[AUDIO]"))
+AUDIO_DIR = Path(os.getenv("MUSICRAG_AUDIO_DIR", "F:/[AUDIO]"))
 AIMP_EXE = os.getenv("MUSICRAG_AIMP", r"C:\Program Files\AIMP\AIMP.exe")
 
 EMBED_MODEL = os.getenv("MUSICRAG_EMBED_MODEL", "nomic-embed-text")

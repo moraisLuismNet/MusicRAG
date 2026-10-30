@@ -126,7 +126,7 @@ def ensure_model(progress=None, force: bool = False) -> Path:
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     if engine() == "whisper":
         from huggingface_hub import snapshot_download
-        print(f"Download voice model ({WHISPER REPO}) if missing...")
+        print(f"Download voice model ({WHISPER_REPO}) if missing...")
         path = snapshot_download(WHISPER_REPO)
         return Path(path)
     if VOSK_MODEL_DIR.exists() and not force:
@@ -138,7 +138,7 @@ def ensure_model(progress=None, force: bool = False) -> Path:
         def _report(blocks, block_size, total):
             if progress and total:
                 progress(min(blocks * block_size / total, 1.0))
-        print(f"Download voice model ({VOSK MODEL NAME})...")
+        print(f"Download voice model ({VOSK_MODEL_NAME})...")
         urllib.request.urlretrieve(VOSK_MODEL_URL, tmp, reporthook=_report)
         with zipfile.ZipFile(tmp) as z:
             z.extractall(DATA_DIR)
